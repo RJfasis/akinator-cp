@@ -12,25 +12,33 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	// string จาก API ของ openweathermap
 	$todayWeather = file_get_contents('http://api.openweathermap.org/data/2.5/weather?q='.$_GET["province"].',th&appid=14b4a36d352be590b73ae1892c79704e');
 	$obj = json_decode($todayWeather,true);
-
+	////echo $todayWeather;
 	// สภาพอากาศโดยรวม -- clear sky, few clouds, scattered และ other
 	$weather = $obj['weather'][0]['description'];
-	if($weather != "clear sky" || $weather != "few clouds" || $weather != "scattered clouds") $weather = "other";
+	echo "สภาพอากาศ : ".$weather."<br />";
+	if($weather != "clear sky" && $weather != "few clouds" && $weather != "scattered clouds") $weather = "other";
+
 	//ความชื้น -- น้อยกว่า 60 และ 60ถึง100
 	$humidity =  $obj['main']['humidity']>=60? "wet":"dry";
+	echo "ความชื้น : ".$humidity."<br />";
 	//ความเร็วลม  -- strong และ weak
 	$wind = $obj['wind']['speed']>3? "strong":"weak";
+	echo "ความเร็วลม : ".$wind."<br />";
 	//อุณหภูมิ -- hot และ cold
 	$temp = $obj['main']['temp']>80.6? "hot":"cold";
+	echo "อุณหภูมิ : ".$temp."<br />";
 	//เวลา -- mornig, noon, evening และ night
 	$time = date("H:i",time());
 	if( $time > date("H:i",strtotime('4:00')) &&  $time < date("H:i",strtotime('10:00')) ) $time = "morning";
 	else if ( $time > date("H:i",strtotime('10:00')) &&  $time < date("H:i",strtotime('14:00')) ) $time = "noon";
 	else if ( $time > date("H:i",strtotime('14:00')) &&  $time < date("H:i",strtotime('18:00')) ) $time = "evening";
 	else $time = "night";
+	echo "เวลา : ".$time."<br />";
 	//เวลาอาทิตย์ตก -- early และ late
 	$sunset = date("H:i",$obj['sys']['sunset']) < date("H:i",strtotime('18:00'))? "early":"late";
+	echo "อาทิตย์ตกดิน : ".$sunset."<br />";
 
+	//ตรวจตาม tree ว่าลง case ไหน
 	if($time=="morning"){
 		if($weather=="clear sky") $case = 1;
 		else if($weather=="few clouds") $case = 1;
@@ -40,6 +48,7 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 		}
 		else if($weather=="other") $case = 6;
 	}else if($time=="noon"){
+
 		if($weather=="clear sky") $case = 1;
 		else if($weather=="few clouds"){
 			if($humidity=="dry") $case = 1;
