@@ -52,38 +52,49 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	$host = "localhost";
 	$username = "root";
 	$password = "1234567890";
-	$objConnect = mysqli_connect($host,$username,$password);
+	$dbname = "ai2";
+	$objConnect = new mysqli($host,$username,$password,$dbname);
 
 	$case = -1;
 	$msg="";
 	$img=null;
+	$idQuery=null;
+	$answer=null;
+	$score=null;
 
 	//query from database
-	$strQuery = "SELECT `id` FROM `approval` WHERE `weather` = '$weather' AND `humidity` = '$humidity' AND `wind` = '$wind' AND `temp` = '$temp' AND `time` = '$time' AND `sunset` = '$sunset'";
-	$idQuery = mysqli_query($objConnect,$strQuery);
+	$strQuery = "SELECT id, answer, score FROM approval WHERE weather = '$weather' AND humidity = '$humidity' AND wind = '$wind' AND temp = '$temp' AND time = '$time' AND sunset = '$sunset'";
+	// $strQuery = "SELECT id, answer, score FROM approval WHERE weather = 1 AND humidity = 1 AND wind = 1 AND temp = 1 AND time = 1 AND sunset = 1";
+	$result = $objConnect->query($strQuery);
+	if ($result->num_rows > 0) {
+		$row=$result->fetch_assoc();
+		$idQuery=$row["id"];
+		$answer=$row["answer"];
+		$score=$row["score"];
+    }
+
 	if($idQuery != null){
-	$answer = mysqli_query($objConnect, "SELECT `answer` FROM `approval` WHERE `id` = '$idQuery'");
-	$score = mysqli_query($objConnect, "SELECT `score` FROM `approval` WHERE`id` = '$idQuery'");
-	$threshold = 5;
-	if(abs($score) < 5){
-		if($answer == 0) {
-			$case = -1;
-			//NO and check tree
-		}else{
-			$case = 1;
-			//YES
-		}
-	}else
-		if($answer == 0) {
-			$img = 'majN.jpg';
-			$msg = 'ไม่แน่ใจเหมือนกัน อย่าเพิ่งซักเลยดีกว่านะ...';
-			//NO majority
-		}else{
-			$img = 'majY.jpg';
-			$msg = 'ไม่แน่ใจเหมือนกัน ลองซักดูก็ได้นะ...';
-			//YES majority
-		}
+		$threshold = 5;
+		if(abs($score) < 5){
+			if($answer == 0) {
+				$case = -1;
+				//NO and check tree
+			}else{
+				$case = 1;
+				//YES
+			}
+		}else
+			if($answer == 0) {
+				$img = 'majN.jpg';
+				$msg = 'ไม่แน่ใจเหมือนกัน อย่าเพิ่งซักเลยดีกว่านะ...';
+				//NO majority
+			}else{
+				$img = 'majY.jpg';
+				$msg = 'ไม่แน่ใจเหมือนกัน ลองซักดูก็ได้นะ...';
+				//YES majority
+			}
 	}
+
 	if($case < 0){
 		//ตรวจตาม tree ว่าลง case ไหน
 		if($time=="morning"){
@@ -131,8 +142,21 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 		}else{
 			$case = 3;
 		}
+		$ans = 0;
+		if($case == 1){
+			$ans = 1;
+		}
+		if($idQuery == null){
+			$strQuery = "INSERT INTO approval (weather, humidity, wind, temp, time, sunset, answer, score) VALUES ('$weather', '$humidity', '$wind', '$temp', '$time', '$sunset', '$ans', '0');";
+			if($objConnect->query($strQuery) === TRUE) {
+				// echo "New record created successfully";
+			}
+			else{
+				// echo "Failed";
+			}
+		}
 	}
-	mysqli_close($objConnect);
+	$objConnect->close();
 
 	switch ($case) {
     case 1:
@@ -162,7 +186,11 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
     default:
     	break;
 	}
+	if(isset($_GET["score"]) and $_GET["score"] != ''){
+	 	
+	}
 }
+
 ?>
 
 <body style="background-color:LightSteelBlue">
@@ -195,13 +223,13 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.open("GET", location.href+"?score=-1" , true);
 			xmlhttp.send();
-			window.location = "/Laundry-Forecast-CP";
+			//window.location = "/Laundry-Forecast-CP";
 		})
 		$('#agree').on('click', function (e) {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.open("GET", location.href+"?score=1" , true);
 			xmlhttp.send();
-			window.location = "/Laundry-Forecast-CP";
+			//window.location = "/Laundry-Forecast-CP";
 		})
 
 	</script>
