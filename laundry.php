@@ -12,6 +12,14 @@
 	<title>Laundry Seer</title>
 </head>
 <?php
+
+$host = "localhost";
+$username = "root";
+$password = "1234567890";
+$objConnect = mysqli_connect($host,$username,$password);
+// access database before close
+mysqli_close($objConnect);
+
 if(isset($_GET["province"]) and $_GET["province"] != ''){
 	// string จาก API ของ openweathermap
 	$todayWeather = file_get_contents('http://api.openweathermap.org/data/2.5/weather?q='.$_GET["province"].',th&appid=14b4a36d352be590b73ae1892c79704e');
