@@ -23,18 +23,18 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	//echo $todayWeather;
 	// สภาพอากาศโดยรวม -- clear sky, few clouds, scattered และ other
 	$weather = $obj['weather'][0]['description'];
-	echo "สภาพอากาศ : ".$weather."<br />";
+	// echo "สภาพอากาศ : ".$weather."<br />";
 	if($weather != "clear sky" && $weather != "few clouds" && $weather != "scattered clouds") $weather = "other";
 
 	//ความชื้น -- น้อยกว่า 60 และ 60ถึง100
 	$humidity =  $obj['main']['humidity']>=60? "wet":"dry";
-	echo "ความชื้น : ".$humidity."<br />";
+	// echo "ความชื้น : ".$humidity."<br />";
 	//ความเร็วลม  -- strong และ weak
 	$wind = $obj['wind']['speed']>3? "strong":"weak";
-	echo "ความเร็วลม : ".$wind."<br />";
+	// echo "ความเร็วลม : ".$wind."<br />";
 	//อุณหภูมิ -- hot และ cold
 	$temp = $obj['main']['temp']>80.6? "hot":"cold";
-	echo "อุณหภูมิ : ".$temp."<br />";
+	// echo "อุณหภูมิ : ".$temp."<br />";
 	//เวลา -- mornig, noon, evening และ night
 	
 	date_default_timezone_set("Asia/Bangkok");
@@ -44,57 +44,95 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	else if ( $time > date("H:i",strtotime('10:00')) &&  $time < date("H:i",strtotime('14:00')) ) $time = "noon";
 	else if ( $time > date("H:i",strtotime('14:00')) &&  $time < date("H:i",strtotime('18:00')) ) $time = "evening";
 	else $time = "night";
-	echo "เวลา : ".$time."<br />";
+	// echo "เวลา : ".$time."<br />";
 	//เวลาอาทิตย์ตก -- early และ late
 	$sunset = date("H:i",$obj['sys']['sunset']) < date("H:i",strtotime('18:00'))? "early":"late";
-	echo "อาทิตย์ตกดิน : ".$sunset."<br />";
+	// echo "อาทิตย์ตกดิน : ".$sunset."<br />";
 
-	//ตรวจตาม tree ว่าลง case ไหน
-	if($time=="morning"){
-		if($weather=="clear sky") $case = 1;
-		else if($weather=="few clouds") $case = 1;
-		else if($weather=="scattered clouds"){
-			if($humidity=="dry") $case = 1;
-			else if($humidity=="wet") $case = 2;
-		}
-		else if($weather=="other") $case = 6;
-	}else if($time=="noon"){
+	$host = "localhost";
+	$username = "root";
+	$password = "1234567890";
+	$objConnect = mysqli_connect($host,$username,$password);
 
-		if($weather=="clear sky") $case = 1;
-		else if($weather=="few clouds"){
-			if($humidity=="dry") $case = 1;
-			else if($humidity=="wet") $case = 2;
+	$case = -1;
+	$msg="";
+	$img=null;
+
+	//query from database
+	$strQuery = "SELECT `id` FROM `approval` WHERE `weather` = '$weather' AND `humidity` = '$humidity' AND `wind` = '$wind' AND `temp` = '$temp' AND `time` = '$time' AND `sunset` = '$sunset'";
+	$idQuery = mysqli_query($objConnect,$strQuery);
+	if($idQuery != null){
+	$answer = mysqli_query($objConnect, "SELECT `answer` FROM `approval` WHERE `id` = '$idQuery'");
+	$score = mysqli_query($objConnect, "SELECT `score` FROM `approval` WHERE`id` = '$idQuery'");
+	$threshold = 5;
+	if(abs($score) < 5){
+		if($answer == 0) {
+			$case = -1;
+			//NO and check tree
+		}else{
+			$case = 1;
+			//YES
 		}
-		else if($weather=="scattered clouds"){
-			if($humidity=="dry") $case = 1;
-			else if($humidity=="wet") $case = 2;
+	}else
+		if($answer == 0) {
+			$img = 'majN.jpg';
+			$msg = 'ไม่แน่ใจเหมือนกัน อย่าเพิ่งซักเลยดีกว่านะ...';
+			//NO majority
+		}else{
+			$img = 'majY.jpg';
+			$msg = 'ไม่แน่ใจเหมือนกัน ลองซักดูก็ได้นะ...';
+			//YES majority
 		}
-		else if($weather=="other") $case = 6;
-	}else if($time=="evening"){
-		if($sunset=="early") $case = 4;
-		else if($sunset=="late"){
-			if($humidity=="wet") $case = 2;
-			else if($humidity=="dry"){
-				if($temp=="hot"){
-					if($weather=="clear sky") $case = 1;
-					else if ($weather=="few clouds") $case = 1;
-					else if ($weather=="scattered clouds") $case = 1;
-					else if ($weather=="other") $case = 6;
-				}
-				else if($weather=="cold"){
-					if($wind=="weak") $case = 5;
-					else if($wind=="strong"){
-						if ($weather=="clear sky") $case = 1;
+	}
+	if($case < 0){
+		//ตรวจตาม tree ว่าลง case ไหน
+		if($time=="morning"){
+			if($weather=="clear sky") $case = 1;
+			else if($weather=="few clouds") $case = 1;
+			else if($weather=="scattered clouds"){
+				if($humidity=="dry") $case = 1;
+				else if($humidity=="wet") $case = 2;
+			}
+			else if($weather=="other") $case = 6;
+		}else if($time=="noon"){
+
+			if($weather=="clear sky") $case = 1;
+			else if($weather=="few clouds"){
+				if($humidity=="dry") $case = 1;
+				else if($humidity=="wet") $case = 2;
+			}
+			else if($weather=="scattered clouds"){
+				if($humidity=="dry") $case = 1;
+				else if($humidity=="wet") $case = 2;
+			}
+			else if($weather=="other") $case = 6;
+		}else if($time=="evening"){
+			if($sunset=="early") $case = 4;
+			else if($sunset=="late"){
+				if($humidity=="wet") $case = 2;
+				else if($humidity=="dry"){
+					if($temp=="hot"){
+						if($weather=="clear sky") $case = 1;
 						else if ($weather=="few clouds") $case = 1;
 						else if ($weather=="scattered clouds") $case = 1;
 						else if ($weather=="other") $case = 6;
 					}
+					else if($weather=="cold"){
+						if($wind=="weak") $case = 5;
+						else if($wind=="strong"){
+							if ($weather=="clear sky") $case = 1;
+							else if ($weather=="few clouds") $case = 1;
+							else if ($weather=="scattered clouds") $case = 1;
+							else if ($weather=="other") $case = 6;
+						}
+					}
 				}
 			}
+		}else{
+			$case = 3;
 		}
-	}else{
-		$case = 3;
 	}
+	mysqli_close($objConnect);
 
 	switch ($case) {
     case 1:
@@ -102,7 +140,7 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 		$msg = 'ซักผ้ากันเถอะ อากาศดีมว๊าก ! ^o^';
         break;
 	case 2:
-        $img = 'ai_04.jpg';
+        $img = 'ai_02.jpg';
 		$msg = 'อากาศดูชื้น ๆ นะ อย่าเพิ่งซักผ้าเลย ฝนอาจจะตกนะ ! o_o';
         break;
 	case 3:
@@ -121,13 +159,8 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
         $img = 'ai_02.jpg';
 		$msg = 'วันนี้อากาศไม่ดี อย่าเพิ่งซักผ้าเลยนะ !';
         break;
-
-	}
-
-
-
-	if(isset($_GET["score"]) and $_GET["score"] != ''){
-		//เขียนcode ยิงใส่ database ตรงนี้
+    default:
+    	break;
 	}
 }
 ?>
@@ -162,13 +195,13 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.open("GET", location.href+"?score=-1" , true);
 			xmlhttp.send();
-			//window.location = "/Laundry-Forecast-CP";
+			window.location = "/Laundry-Forecast-CP";
 		})
 		$('#agree').on('click', function (e) {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.open("GET", location.href+"?score=1" , true);
 			xmlhttp.send();
-			//window.location = "/Laundry-Forecast-CP";
+			window.location = "/Laundry-Forecast-CP";
 		})
 
 	</script>
