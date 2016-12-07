@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
   <meta name="author" content="">
+  <!--font-->
+  <link href="https://fonts.googleapis.com/css?family=Signika" rel="stylesheet">
+
   <!-- Bootstrap Core CSS -->
   <link href="./bootstrap.css" rel="stylesheet" type="text/css">
 
@@ -59,7 +62,9 @@
 <br />
 
           <form action="laundry.php" method="get" class="form-inline" align="right" >
-             <select name="province"  class="form-control">
+             <select name="province"  class="form-control" style="background-color: white;
+              padding-left: 20px;
+              padding-right: 200px;">
                <option selected disabled>Select your province</option>
                <option value="amnatcharoen">Amnat Charoen</option>
                <option value="angthong">Ang Thong</option>
@@ -138,7 +143,7 @@
                <option value="uttaradit">Uttaradit</option>
                <option value="yala">Yala</option>
                <option value="yasothon">Yasothon</option>
-             </select> <button type="submit" class="btn btn-default">Submit</button>
+             </select>	&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-default" >Submit</button>&nbsp;&nbsp;&nbsp;
 
           </form>
 
