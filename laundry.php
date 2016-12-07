@@ -9,7 +9,7 @@
 
 	<!-- Custom CSS -->
 	<link href="./one-page-wonder.css" rel="stylesheet" type="text/css">
-	<title>Laundry Recommender</title>
+	<title>Laundry Seer</title>
 </head>
 <?php
 
