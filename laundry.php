@@ -36,6 +36,9 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	$temp = $obj['main']['temp']>80.6? "hot":"cold";
 	echo "อุณหภูมิ : ".$temp."<br />";
 	//เวลา -- mornig, noon, evening และ night
+	
+	date_default_timezone_set("Asia/Bangkok");
+	
 	$time = date("H:i",time());
 	if( $time > date("H:i",strtotime('4:00')) &&  $time < date("H:i",strtotime('10:00')) ) $time = "morning";
 	else if ( $time > date("H:i",strtotime('10:00')) &&  $time < date("H:i",strtotime('14:00')) ) $time = "noon";
