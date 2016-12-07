@@ -156,7 +156,6 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 			}
 		}
 	}
-	$objConnect->close();
 
 	switch ($case) {
     case 1:
@@ -186,9 +185,18 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
     default:
     	break;
 	}
+
 	if(isset($_GET["score"]) and $_GET["score"] != ''){
-	 	
+		if($_GET["score"]=='-1'){
+			$newScore = $score - 1;
+		}else{
+			$newScore = $score + 1;
+		}
+	 	$strQuery = "UPDATE approval SET score = '$newScore' WHERE id = '$idQuery'";
+		$objConnect->query($strQuery);
 	}
+
+	$objConnect->close();
 }
 
 ?>
@@ -221,15 +229,15 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	<script>
 		$('#disagree').on('click', function (e) {
 			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.open("GET", location.href+"?score=-1" , true);
+			xmlhttp.open("GET", location.href+"&score=-1" , true);
 			xmlhttp.send();
-			//window.location = "/Laundry-Forecast-CP";
+			window.location = "/Laundry-Forecast-CP";
 		})
 		$('#agree').on('click', function (e) {
 			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.open("GET", location.href+"?score=1" , true);
+			xmlhttp.open("GET", location.href+"&score=1" , true);
 			xmlhttp.send();
-			//window.location = "/Laundry-Forecast-CP";
+			window.location = "/Laundry-Forecast-CP";
 		})
 
 	</script>
