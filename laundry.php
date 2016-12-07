@@ -9,46 +9,42 @@
 
 	<!-- Custom CSS -->
 	<link href="./one-page-wonder.css" rel="stylesheet" type="text/css">
-	<title>Laundry Seer</title>
+
+	<!--jQuery-->
+	<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+
+	<title>Laundry Recommender</title>
 </head>
 <?php
-
-$host = "localhost";
-$username = "root";
-$password = "1234567890";
-$objConnect = mysqli_connect($host,$username,$password);
-// access database before close
-mysqli_close($objConnect);
-
 if(isset($_GET["province"]) and $_GET["province"] != ''){
 	// string จาก API ของ openweathermap
 	$todayWeather = file_get_contents('http://api.openweathermap.org/data/2.5/weather?q='.$_GET["province"].',th&appid=14b4a36d352be590b73ae1892c79704e');
 	$obj = json_decode($todayWeather,true);
-	////echo $todayWeather;
+	//echo $todayWeather;
 	// สภาพอากาศโดยรวม -- clear sky, few clouds, scattered และ other
 	$weather = $obj['weather'][0]['description'];
-	//echo "สภาพอากาศ : ".$weather."<br />";
+	echo "สภาพอากาศ : ".$weather."<br />";
 	if($weather != "clear sky" && $weather != "few clouds" && $weather != "scattered clouds") $weather = "other";
 
 	//ความชื้น -- น้อยกว่า 60 และ 60ถึง100
 	$humidity =  $obj['main']['humidity']>=60? "wet":"dry";
-	//echo "ความชื้น : ".$humidity."<br />";
+	echo "ความชื้น : ".$humidity."<br />";
 	//ความเร็วลม  -- strong และ weak
 	$wind = $obj['wind']['speed']>3? "strong":"weak";
-	//echo "ความเร็วลม : ".$wind."<br />";
+	echo "ความเร็วลม : ".$wind."<br />";
 	//อุณหภูมิ -- hot และ cold
 	$temp = $obj['main']['temp']>80.6? "hot":"cold";
-	//echo "อุณหภูมิ : ".$temp."<br />";
+	echo "อุณหภูมิ : ".$temp."<br />";
 	//เวลา -- mornig, noon, evening และ night
 	$time = date("H:i",time());
 	if( $time > date("H:i",strtotime('4:00')) &&  $time < date("H:i",strtotime('10:00')) ) $time = "morning";
 	else if ( $time > date("H:i",strtotime('10:00')) &&  $time < date("H:i",strtotime('14:00')) ) $time = "noon";
 	else if ( $time > date("H:i",strtotime('14:00')) &&  $time < date("H:i",strtotime('18:00')) ) $time = "evening";
 	else $time = "night";
-	//echo "เวลา : ".$time."<br />";
+	echo "เวลา : ".$time."<br />";
 	//เวลาอาทิตย์ตก -- early และ late
 	$sunset = date("H:i",$obj['sys']['sunset']) < date("H:i",strtotime('18:00'))? "early":"late";
-	//echo "อาทิตย์ตกดิน : ".$sunset."<br />";
+	echo "อาทิตย์ตกดิน : ".$sunset."<br />";
 
 	//ตรวจตาม tree ว่าลง case ไหน
 	if($time=="morning"){
@@ -103,7 +99,7 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 		$msg = 'ซักผ้ากันเถอะ อากาศดีมว๊าก ! ^o^';
         break;
 	case 2:
-        $img = 'ai_02.jpg';
+        $img = 'ai_04.jpg';
 		$msg = 'อากาศดูชื้น ๆ นะ อย่าเพิ่งซักผ้าเลย ฝนอาจจะตกนะ ! o_o';
         break;
 	case 3:
@@ -127,7 +123,9 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 
 
 
-
+	if(isset($_GET["score"]) and $_GET["score"] != ''){
+		//เขียนcode ยิงใส่ database ตรงนี้
+	}
 }
 ?>
 
@@ -147,15 +145,30 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 		<div class="col-md-3">
 		</div>
 		<div class="col-md-3">
-			<button type="button" class="btn btn-success center-block" style="padding-left:100px; padding-right:100px;">เห็นด้วย</button>
+			<button type="button" class="btn btn-success center-block" style="padding-left:100px; padding-right:100px;" id="agree">เห็นด้วย</button>
 		</div>
 		<div class="col-md-3">
-			<button type="button" class="btn btn-danger center-block" style="padding-left:100px; padding-right:100px;">ไม่เห็นด้วย</button>
+			<button type="button" class="btn btn-danger center-block" style="padding-left:100px; padding-right:100px;" id="disagree">ไม่เห็นด้วย</button>
 		</div>
 		<div class="col-md-3">
 		</div>
 	</div>
 
+	<script>
+		$('#disagree').on('click', function (e) {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET", location.href+"?score=-1" , true);
+			xmlhttp.send();
+			//window.location = "/Laundry-Forecast-CP";
+		})
+		$('#agree').on('click', function (e) {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET", location.href+"?score=1" , true);
+			xmlhttp.send();
+			//window.location = "/Laundry-Forecast-CP";
+		})
+
+	</script>
 
 
 

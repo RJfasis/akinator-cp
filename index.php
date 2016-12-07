@@ -15,7 +15,7 @@
   <!-- Custom CSS -->
   <link href="./one-page-wonder.css" rel="stylesheet" type="text/css">
 
-  <title>Laundry Seer</title>
+  <title>Laundry Recommender</title>
 
 </head>
 <body>
