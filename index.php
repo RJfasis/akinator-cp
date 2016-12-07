@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <!--font-->
-  <link href="https://fonts.googleapis.com/css?family=Signika" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Itim" rel="stylesheet">
 
   <!-- Bootstrap Core CSS -->
   <link href="./bootstrap.css" rel="stylesheet" type="text/css">
@@ -168,9 +168,10 @@
              <div class="featurette" >
                  <img class="featurette-image img-circle img-responsive pull-left" src="http://www.allyke.com/wp-content/uploads/2016/06/tech-machinelearning.png">
                  <h2 class="featurette-heading"> Get the answer from
-                     <span class="text-muted"> a decision tree.</span>
+                     <span class="text-muted"> a decision tree and Database.</span>
                  </h2>
-                 <p class="lead">Building the optimum decision tree (by looking at the infomation gain) from training datesets allows us to construct a model that gives the YES/NO answer regarding whether or not you should do your laundry. </p>
+                 <p class="lead">Building the optimum decision tree (by looking at the infomation gain) from training datesets allows us to construct a model that gives the YES/NO answer regarding whether or not you should do your laundry.</p>
+                 <p class="lead">Futhermore, with a Database storing  users' approval, we can provide a dynamic answer based on the majority.</p>
              </div>
 
              <hr class="featurette-divider" id="contact">
@@ -182,7 +183,7 @@
                      <span class="text-muted">not have been possible without</span>
                  </h2>
                  <p class="lead">Asst.Prof. Dr. SUKREE SINTHUPINYO, the teacher who taught us the most</p>
-                 <p class="lead">and, of course, the team including 5630648621, 563xxxxxxx and 563xxxxxxx.</p>
+                 <p class="lead">and, of course, the team including 5630648621, 5630513521 and 5630636021.</p>
 
              </div>
 

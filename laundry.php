@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Laundry Recommender</title>
+	<!--font-->
+	<link href="https://fonts.googleapis.com/css?family=Itim" rel="stylesheet">
+
+	<!-- Bootstrap Core CSS -->
+	<link href="./bootstrap.css" rel="stylesheet" type="text/css">
+
+	<!-- Custom CSS -->
+	<link href="./one-page-wonder.css" rel="stylesheet" type="text/css">
+	<title>Laundry Recommender</title>
 </head>
-<body>
-
-
-
 <?php
 if(isset($_GET["province"]) and $_GET["province"] != ''){
 	// string จาก API ของ openweathermap
@@ -15,28 +19,28 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	////echo $todayWeather;
 	// สภาพอากาศโดยรวม -- clear sky, few clouds, scattered และ other
 	$weather = $obj['weather'][0]['description'];
-	echo "สภาพอากาศ : ".$weather."<br />";
+	//echo "สภาพอากาศ : ".$weather."<br />";
 	if($weather != "clear sky" && $weather != "few clouds" && $weather != "scattered clouds") $weather = "other";
 
 	//ความชื้น -- น้อยกว่า 60 และ 60ถึง100
 	$humidity =  $obj['main']['humidity']>=60? "wet":"dry";
-	echo "ความชื้น : ".$humidity."<br />";
+	//echo "ความชื้น : ".$humidity."<br />";
 	//ความเร็วลม  -- strong และ weak
 	$wind = $obj['wind']['speed']>3? "strong":"weak";
-	echo "ความเร็วลม : ".$wind."<br />";
+	//echo "ความเร็วลม : ".$wind."<br />";
 	//อุณหภูมิ -- hot และ cold
 	$temp = $obj['main']['temp']>80.6? "hot":"cold";
-	echo "อุณหภูมิ : ".$temp."<br />";
+	//echo "อุณหภูมิ : ".$temp."<br />";
 	//เวลา -- mornig, noon, evening และ night
 	$time = date("H:i",time());
 	if( $time > date("H:i",strtotime('4:00')) &&  $time < date("H:i",strtotime('10:00')) ) $time = "morning";
 	else if ( $time > date("H:i",strtotime('10:00')) &&  $time < date("H:i",strtotime('14:00')) ) $time = "noon";
 	else if ( $time > date("H:i",strtotime('14:00')) &&  $time < date("H:i",strtotime('18:00')) ) $time = "evening";
 	else $time = "night";
-	echo "เวลา : ".$time."<br />";
+	//echo "เวลา : ".$time."<br />";
 	//เวลาอาทิตย์ตก -- early และ late
 	$sunset = date("H:i",$obj['sys']['sunset']) < date("H:i",strtotime('18:00'))? "early":"late";
-	echo "อาทิตย์ตกดิน : ".$sunset."<br />";
+	//echo "อาทิตย์ตกดิน : ".$sunset."<br />";
 
 	//ตรวจตาม tree ว่าลง case ไหน
 	if($time=="morning"){
@@ -95,29 +99,58 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 		$msg = 'อากาศดูชื้น ๆ นะ อย่าเพิ่งซักผ้าเลย ฝนอาจจะตกนะ ! o_o';
         break;
 	case 3:
-        $img = 'ai_01.jpg';
+        $img = 'ai_03.jpg';
 		$msg = 'มืดแล้ว อย่าเพิ่งซักผ้าเลย เดี๋ยวเหม็นอับหมดนะ ! >~<';
         break;
 	case 4:
-        $img = 'ai_01.jpg';
+        $img = 'ai_03.jpg';
 		$msg = 'วันนี้พระอาทิตย์ตกดินเร็วนะ จะมืดแล้วด้วย ไว้ซักพรุ่งนี้เถอะ';
         break;
 	case 5:
-        $img = 'ai_01.jpg';
+        $img = 'ai_04.jpg';
 		$msg = 'อากาศเย็นเนอะ ลมก็ไม่ค่อยมี ผ้าไม่น่าจะแห้งนะถ้าซักตอนนี้';
         break;
 	case 6:
-        $img = 'ai_01.jpg';
+        $img = 'ai_02.jpg';
 		$msg = 'วันนี้อากาศไม่ดี อย่าเพิ่งซักผ้าเลยนะ !';
         break;
 
 	}
 
-	echo $msg.'<br>';
-	echo '<img src='.$img.'><br>';
+
+
 
 }
 ?>
+
+<body style="background-color:LightSteelBlue">
+
+		<div class="page-header">
+		  <h1 style="text-align:center; background: rgba(255,255,255,0.2);"><?php echo "$msg";?></h1>
+		</div>
+
+	<div class="row">
+		<div class="center-block">
+			<?php echo '<img src='.$img.' class="img-rounded img-responsive" width="500" style="margin: 0 auto;">';?>
+		</div>
+	</div>
+	<div class="row">
+		<h3 style="text-align:center; ">คุณเห็นด้วยหรือไม่ ?</h3></br>
+		<div class="col-md-3">
+		</div>
+		<div class="col-md-3">
+			<button type="button" class="btn btn-success center-block" style="padding-left:100px; padding-right:100px;">เห็นด้วย</button>
+		</div>
+		<div class="col-md-3">
+			<button type="button" class="btn btn-danger center-block" style="padding-left:100px; padding-right:100px;">ไม่เห็นด้วย</button>
+		</div>
+		<div class="col-md-3">
+		</div>
+	</div>
+
+
+
+
 
 </body>
 </html>
