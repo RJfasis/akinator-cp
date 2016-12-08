@@ -75,7 +75,7 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 
 	if($idQuery != null){
 		$threshold = 5;
-		if(abs($score) < 5){
+		if(abs($score) < $threshold){
 			if($answer == 0) {
 				$case = -1;
 				//NO and check tree
@@ -83,16 +83,19 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 				$case = 1;
 				//YES
 			}
-		}else
-			if($answer == 0) {
+		}else if($score < 0){
+			if($answer != 0) {
+				$case = 0;
 				$img = 'majN.jpg';
 				$msg = 'ไม่แน่ใจเหมือนกัน อย่าเพิ่งซักเลยดีกว่านะ...';
 				//NO majority
 			}else{
+				$case = 0;
 				$img = 'majY.jpg';
 				$msg = 'ไม่แน่ใจเหมือนกัน ลองซักดูก็ได้นะ...';
 				//YES majority
 			}
+		}
 	}
 
 	if($case < 0){
