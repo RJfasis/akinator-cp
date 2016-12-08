@@ -52,7 +52,7 @@ if(isset($_GET["province"]) and $_GET["province"] != ''){
 	$host = "localhost";
 	$username = "root";
 	$password = "1234567890";
-	$dbname = "ai2";
+	$dbname = "laundry_seer";
 	$objConnect = new mysqli($host,$username,$password,$dbname);
 
 	$case = -1;
